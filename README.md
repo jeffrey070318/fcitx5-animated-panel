@@ -36,3 +36,8 @@ This is an experimental frontend. Stop it and restart Fcitx5 to return to classi
 
 `install.sh` only checks the local Python dependencies; it does not replace the
 system Fcitx5 UI or change the current input method configuration.
+
+## Reversible session test
+
+Run `./run-session.sh` from a desktop terminal. Keep it open while testing;
+press Ctrl+C to stop the experimental panel and restore classicui.

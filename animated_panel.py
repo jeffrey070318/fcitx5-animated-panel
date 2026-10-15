@@ -56,7 +56,8 @@ class Window(QtWidgets.QWidget):
     def receive(self,*args,member=None,**kw):
         logging.debug('%s %r', member, args)
         if member=='UpdateSpotLocation': self.spot=QtCore.QPoint(int(args[0]),int(args[1]));self.position()
-        elif member=='UpdateLookupTable': self.update_words(*args[:3])
+        elif member=='UpdateLookupTable':
+            self.update_words(list(args[0]), list(args[1]), list(args[2]))
         elif member=='ShowLookupTable': self.reveal(bool(args[0]) and bool(self.words))
         elif member=='UpdatePreeditText': self.pre.setText(str(args[0]));self.position()
         elif member=='ShowPreedit': self.pre.setVisible(bool(args[0]));self.position()
