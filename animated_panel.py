@@ -1,10 +1,13 @@
 #!/usr/bin/python3
 """Experimental X11 Fcitx5 Kimpanel frontend. Exit to restore classicui."""
 import sys
+import logging
 import dbus, dbus.service
 from dbus.mainloop.glib import DBusGMainLoop
 from gi.repository import GLib
 from PyQt5 import QtCore, QtGui, QtWidgets
+
+logging.basicConfig(level=logging.INFO, format='%(levelname)s %(message)s')
 
 class PanelBus(dbus.service.Object):
     @dbus.service.signal('org.kde.kimpanel.panel', signature='')
@@ -51,13 +54,13 @@ class Window(QtWidgets.QWidget):
             b.clicked.connect(lambda _,j=i: endpoint.SelectCandidate(j));self.row.addWidget(b)
         self.position()
     def receive(self,*args,member=None,**kw):
-        print(member, repr(args),flush=True)
+        logging.debug('%s %r', member, args)
         if member=='UpdateSpotLocation': self.spot=QtCore.QPoint(int(args[0]),int(args[1]));self.position()
         elif member=='UpdateLookupTable': self.update_words(*args[:3])
         elif member=='ShowLookupTable': self.reveal(bool(args[0]) and bool(self.words))
         elif member=='UpdatePreeditText': self.pre.setText(str(args[0]));self.position()
         elif member=='ShowPreedit': self.pre.setVisible(bool(args[0]));self.position()
-        elif member in ('Hide','ExecDialog'): self.reveal(False)
+        elif member in ('Hide','ExecDialog','ShowAux'): self.reveal(False)
 
 app=QtWidgets.QApplication(sys.argv);app.setQuitOnLastWindowClosed(False)
 w=Window()

@@ -10,6 +10,15 @@ Experimental Qt5/D-Bus candidate panel for Fcitx5 Kimpanel. It keeps the existin
 - Candidate click signals are wired to Fcitx5
 - Tested with the local Fcitx5 + Rime session; the panel receives live D-Bus events
 
+## Dependencies
+
+Use the distro Python, rather than an Anaconda Python, so Qt and D-Bus libraries
+resolve against Ubuntu's system libraries. On Ubuntu:
+
+```bash
+sudo apt install python3-pyqt5 python3-dbus python3-gi gir1.2-glib-2.0
+```
+
 ## Run
 
 ```bash
@@ -24,3 +33,6 @@ Preview without Fcitx5 integration:
 ```
 
 This is an experimental frontend. Stop it and restart Fcitx5 to return to classicui.
+
+`install.sh` only checks the local Python dependencies; it does not replace the
+system Fcitx5 UI or change the current input method configuration.

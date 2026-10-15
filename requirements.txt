@@ -1,0 +1,5 @@
+# Ubuntu packages (system Python)
+python3-pyqt5
+python3-dbus
+python3-gi
+gir1.2-glib-2.0
