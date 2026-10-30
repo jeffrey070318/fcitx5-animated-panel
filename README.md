@@ -1,7 +1,8 @@
 # Fcitx5 Animated Panel
 
 An X11 candidate frontend for Fcitx5, with a rounded dark panel, subtle shadow,
-90 ms fade-in and 65 ms fade-out. Rime continues to handle input, dictionaries,
+115 ms fade-in and 100 ms fade-out, with a short 24 ms hide debounce.
+Rime continues to handle input, dictionaries,
 Shift switching and learned word frequencies. This is an independent project,
 not affiliated with WeChat.
 
@@ -10,7 +11,15 @@ not affiliated with WeChat.
 - Reuse candidate buttons rather than destroy/recreate them on every key.
 - Coalesce text, position and visibility messages within the Qt event loop.
 - Do not replay fade-in while typing; reverse an interrupted fade smoothly.
-- Hold the maximum panel width during one composition to reduce horizontal jitter.
+- Ease panel growth over 135 ms; wait 90 ms before a 155 ms shrink transition.
+- Retain the last complete candidate frame throughout fade-out.
+- Keep glyphs at their native size while the background expands around them.
+- Share a precise timer across opacity, reveal and size animations, using the
+  caret screen's reported refresh rate (about 4 ms at 240 Hz). Follow screen and
+  refresh-rate changes; stop the timer whenever all transitions finish.
+- Advance animations by monotonic elapsed time so delayed frames do not stretch
+  the transition duration. This timer is not synchronized to compositor vsync
+  and does not guarantee a particular displayed frame rate.
 - Track the caret immediately; do not add movement interpolation/input delay.
 - Handle the real `org.kde.impanel2.SetLookupTable` and `SetSpotRect` methods.
 - Candidate selection and page buttons use the `org.kde.impanel` signals.
@@ -80,8 +89,10 @@ env -u LD_LIBRARY_PATH -u PYTHONPATH -u PYTHONHOME dbus-run-session -- \
   /usr/bin/python3 test_bus.py "$PWD/animated_panel.py"
 ```
 
-Six window tests cover button reuse, opacity continuity, auxiliary visibility,
-fade reversal, selection indices and screen placement. The isolated D-Bus test
+Seventeen tests cover button reuse, opacity continuity, auxiliary visibility,
+fade reversal, selection indices, screen placement, size transitions, retained
+exit content, duplicate caret updates, refresh-rate changes, idle timer shutdown
+and progress after a delayed frame. The isolated D-Bus test
 checks the real method signatures and release of frontend ownership.
 
 Local desktop validation also exercised a dedicated IBus input context backed
